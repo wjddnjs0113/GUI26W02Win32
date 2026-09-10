@@ -141,11 +141,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="model.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="W02Win32.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="model.cpp" />
     <ClCompile Include="W02Win32.cpp" />
   </ItemGroup>
   <ItemGroup>
