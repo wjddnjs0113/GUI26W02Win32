@@ -125,6 +125,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
 //
 //
+
+int shapeType = 1;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
@@ -146,16 +148,41 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
     }
     break;
+	case WM_KEYDOWN:
+	{
+        switch (wParam)
+        {
+        case '1':
+            shapeType = 1;
+            InvalidateRect(hWnd, NULL, TRUE);
+            break;
+        case '2':
+            shapeType = 2;
+            InvalidateRect(hWnd, NULL, TRUE);
+            break;
+        case '3':
+            shapeType = 3;
+            InvalidateRect(hWnd, NULL, TRUE);
+            break;
+        }
+	}
+	break;
     case WM_LBUTTONDOWN:
     {
         POINT p;
         p.x = LOWORD(lParam);
         p.y = HIWORD(lParam);
 
-        AddPoint(p);
+        AddPoint(p, shapeType);
 
         InvalidateRect(hWnd, NULL, TRUE);
     }
+    break;
+    case WM_RBUTTONDOWN:
+	{
+		DeleteLastPoint();
+		InvalidateRect(hWnd, NULL, TRUE);
+	}
     break;
     case WM_PAINT:
     {
@@ -174,7 +201,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         int n = GetNumPoints();
         for (int i = 0; i < n; i++) {
             POINT p = GetPoint(i);
-            Ellipse(hdc, p.x - 30, p.y - 30, p.x + 30, p.y + 30);
+			int curType = GetShapeType(i);
+            if (curType == 1)
+                Ellipse(hdc, p.x - 30, p.y - 30, p.x + 30, p.y + 30);
+            else if (curType == 2)
+                Rectangle(hdc, p.x - 30, p.y - 30, p.x + 30, p.y + 30);
+            else if (curType == 3) {
+                POINT triPoints[3];
+
+                triPoints[0].x = p.x;
+                triPoints[0].y = p.y - 30;
+
+                triPoints[1].x = p.x + 30;
+                triPoints[1].y = p.y + 30;
+
+                triPoints[2].x = p.x - 30;
+                triPoints[2].y = p.y + 30;
+
+                Polygon(hdc, triPoints, 3);
+            }
         }
 
         SelectObject(hdc, oldPen);
@@ -196,8 +241,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 // 정보 대화 상자의 메시지 처리기입니다.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
+    INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+    {
     UNREFERENCED_PARAMETER(lParam);
     switch (message)
     {
@@ -213,4 +258,4 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
-}
+    }

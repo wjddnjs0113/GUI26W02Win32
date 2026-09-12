@@ -5,6 +5,7 @@
 
 int GetNumPoints();
 POINT GetPoint(int);
+int GetShapeType(int);
 
-void AddPoint(POINT);
+void AddPoint(POINT, int);
 void DeleteLastPoint();
